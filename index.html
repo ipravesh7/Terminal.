@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>GeoIntel Terminal</title>
-<style>
-     
-body { background:black; color:#00ff9f; font-family: monospace; <!DOCTYPE html>
-<html>
-<head>
-<title>GeoIntel Terminal</title>
+<title>Geopolitics Terminal</title>
 
 <style>
-body { background:black; color:#00ff9f; font-family: monospace; }
+body { 
+  background:black; 
+  color:#00ff9f; 
+  font-family: monospace; 
+}
 
 .header { 
   text-align:center; 
   color:white; 
   font-family: 'Times New Roman'; 
+  margin-bottom: 10px;
 }
 
 .feed { 
@@ -35,6 +34,18 @@ body { background:black; color:#00ff9f; font-family: monospace; }
   margin:5px; 
   cursor:pointer; 
 }
+
+.item:hover {
+  color:yellow;
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+  .feed, .main {
+    width:100%;
+    float:none;
+  }
+}
 </style>
 
 </head>
@@ -46,7 +57,7 @@ body { background:black; color:#00ff9f; font-family: monospace; }
 </div>
 
 <div class="feed" id="feed"></div>
-<div class="main" id="details">Click any news...</div>
+<div class="main" id="details"> News.</div>
 
 <script>
 
@@ -67,9 +78,11 @@ async function loadData(){
       div.className = 'item';
       div.innerText = item.title;
 
+      // ✅ FIXED CLICK (mobile friendly)
       div.onclick = ()=>{
-        document.getElementById('details').innerText =
-          item.content + "\n\nSignal: " + item.signal;
+        document.getElementById('details').innerHTML =
+          "<b>" + item.title + "</b><br><br>" +
+          item.content + "<br><br><b>Signal:</b> " + item.signal;
       };
 
       feed.appendChild(div);
@@ -83,11 +96,11 @@ async function loadData(){
 
 loadData();
 
-/* Auto refresh every 10 seconds */
+/* Auto refresh */
 setInterval(loadData, 10000);
 
 </script>
 
 </body>
 </html>
-<!-- update -->
+<!--update -->
