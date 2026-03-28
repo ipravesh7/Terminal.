@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GeoIntel Terminal</title>
+<style>
+body { background:black; color:#00ff9f; font-family: monospace; }
+.header { text-align:center; color:white; font-family: 'Times New Roman'; }
+.feed { width:30%; float:left; border-right:1px solid #00ff9f; padding:10px; }
+.main { width:65%; float:right; padding:10px; }
+.item { margin:5px; cursor:pointer; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h2>GLOBAL GEOPOLITICAL INTELLIGENCE TERMINAL</h2>
+</div>
+
+<div class="feed" id="feed"></div>
+<div class="main" id="details">Click any news...</div>
+
+<script>
+async function loadData(){
+  const res = await fetch('https://example.com/api/feed');
+  const data = await res.json();
+
+  const feed = document.getElementById('feed');
+  feed.innerHTML = '';
+
+  data.forEach(item=>{
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerText = item.title;
+
+    div.onclick = ()=>{
+      document.getElementById('details').innerText =
+        item.content + "\\n\\nSignal: " + item.signal;
+    };
+
+    feed.appendChild(div);
+  });
+}
+
+loadData();
+</script>
+
+</body>
+</html>
