@@ -4,46 +4,88 @@
 <title>GeoIntel Terminal</title>
 <style>
      
+body { background:black; color:#00ff9f; font-family: monospace; <!DOCTYPE html>
+<html>
+<head>
+<title>GeoIntel Terminal</title>
+
+<style>
 body { background:black; color:#00ff9f; font-family: monospace; }
-.header { text-align:center; color:white; font-family: 'Times New Roman'; }
-.feed { width:30%; float:left; border-right:1px solid #00ff9f; padding:10px; }
-.main { width:65%; float:right; padding:10px; }
-.item { margin:5px; cursor:pointer; }
+
+.header { 
+  text-align:center; 
+  color:white; 
+  font-family: 'Times New Roman'; 
+}
+
+.feed { 
+  width:30%; 
+  float:left; 
+  border-right:1px solid #00ff9f; 
+  padding:10px; 
+}
+
+.main { 
+  width:65%; 
+  float:right; 
+  padding:10px; 
+}
+
+.item { 
+  margin:5px; 
+  cursor:pointer; 
+}
 </style>
+
 </head>
 
 <body>
 
 <div class="header">
-<h2>GLOBAL GEOPOLITICAL INTELLIGENCE TERMINAL</h2>
+<h2> GEOPOLITICAL TERMINAL</h2>
 </div>
 
 <div class="feed" id="feed"></div>
 <div class="main" id="details">Click any news...</div>
 
 <script>
+
 async function loadData(){
-  const res = await fetch('https://geo-intel-backend.onrender.com/api/feed');
-  const data = await res.json();
+  try {
+    const res = await fetch('https://geo-intel-backend.onrender.com/api/feed', {
+      cache: "no-store"
+    });
 
-  const feed = document.getElementById('feed');
-  feed.innerHTML = '';
+    const data = await res.json();
+    console.log(data);
 
-  data.forEach(item=>{
-    const div = document.createElement('div');
-    div.className = 'item';
-    div.innerText = item.title;
+    const feed = document.getElementById('feed');
+    feed.innerHTML = '';
 
-    div.onclick = ()=>{
-      document.getElementById('details').innerText =
-        item.content + "\\n\\nSignal: " + item.signal;
-    };
+    data.forEach(item=>{
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerText = item.title;
 
-    feed.appendChild(div);
-  });
+      div.onclick = ()=>{
+        document.getElementById('details').innerText =
+          item.content + "\n\nSignal: " + item.signal;
+      };
+
+      feed.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    document.getElementById('details').innerText = "Error loading data...";
+  }
 }
 
 loadData();
+
+/* Auto refresh every 10 seconds */
+setInterval(loadData, 10000);
+
 </script>
 
 </body>
