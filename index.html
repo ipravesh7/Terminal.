@@ -1,50 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Geopolitics Terminal</title>
+<title>GeoIntel Elite</title>
 
 <style>
-body { 
-  background:black; 
-  color:#00ff9f; 
-  font-family: monospace; 
+body {
+  margin:0;
+  background:#040c0c;
+  color:#00ff9f;
+  font-family: monospace;
 }
 
-.header { 
-  text-align:center; 
-  color:white; 
-  font-family: 'Times New Roman'; 
-  margin-bottom: 10px;
+.header {
+  text-align:center;
+  padding:10px;
+  border-bottom:1px solid #00ff9f;
 }
 
-.feed { 
-  width:30%; 
-  float:left; 
-  border-right:1px solid #00ff9f; 
-  padding:10px; 
+.container {
+  display:flex;
+  height:70vh;
 }
 
-.main { 
-  width:65%; 
-  float:right; 
-  padding:10px; 
+.left {
+  width:30%;
+  border-right:1px solid #00ff9f;
+  padding:10px;
+  overflow:auto;
 }
 
-.item { 
-  margin:5px; 
-  cursor:pointer; 
+.right {
+  width:70%;
+  padding:15px;
+}
+
+.item {
+  padding:10px;
+  margin:8px 0;
+  border-left:4px solid green;
+  cursor:pointer;
 }
 
 .item:hover {
-  color:yellow;
+  background:#062222;
 }
 
-/* Mobile fix */
-@media (max-width: 768px) {
-  .feed, .main {
-    width:100%;
-    float:none;
-  }
+.item.red { border-color:red; }
+.item.yellow { border-color:orange; }
+
+.signal {
+  font-size:20px;
+  margin-top:10px;
+}
+
+.bar {
+  width:100%;
+  height:12px;
+  background:#111;
+  margin-bottom:10px;
+}
+
+.bar div {
+  height:12px;
+  background:#00ff9f;
+}
+
+.terminal {
+  border-top:1px solid #00ff9f;
+  padding:10px;
+  height:20vh;
+}
+
+input {
+  width:100%;
+  background:black;
+  border:none;
+  color:#00ff9f;
+  font-family: monospace;
+  outline:none;
 }
 </style>
 
@@ -53,54 +86,97 @@ body {
 <body>
 
 <div class="header">
-<h2> GEOPOLITICAL TERMINAL</h2>
+<h2>GLOBAL GEOPOLITICAL INTELLIGENCE TERMINAL — ELITE</h2>
 </div>
 
-<div class="feed" id="feed"></div>
-<div class="main" id="details"> News.</div>
+<div class="container">
+
+<div class="left">
+<h3>LIVE NEWS</h3>
+<div id="feed"></div>
+</div>
+
+<div class="right">
+<h2 id="title">Select news</h2>
+<p id="content"></p>
+
+<div class="signal" id="signal"></div>
+
+<h4>Impact</h4>
+<div class="bar"><div id="globalBar"></div></div>
+<div class="bar"><div id="cryptoBar"></div></div>
+</div>
+
+</div>
+
+<div class="terminal">
+<div id="terminalOutput"></div>
+<input id="command" placeholder="> type command..." />
+</div>
 
 <script>
 
 async function loadData(){
-  try {
-    const res = await fetch('https://geo-intel-backend.onrender.com/api/feed', {
-      cache: "no-store"
-    });
+  const res = await fetch('https://geo-intel-backend.onrender.com/api/feed', {
+    cache: "no-store"
+  });
 
-    const data = await res.json();
-    console.log(data);
+  const data = await res.json();
 
-    const feed = document.getElementById('feed');
-    feed.innerHTML = '';
+  const feed = document.getElementById('feed');
+  feed.innerHTML = '';
 
-    data.forEach(item=>{
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerText = item.title;
+  data.forEach(item=>{
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerText = item.title;
 
-      // ✅ FIXED CLICK (mobile friendly)
-      div.onclick = ()=>{
-        document.getElementById('details').innerHTML =
-          "<b>" + item.title + "</b><br><br>" +
-          item.content + "<br><br><b>Signal:</b> " + item.signal;
-      };
+    // Color logic
+    if(item.signal.includes("BUY")) div.classList.add("green");
+    if(item.signal.includes("VOLATILITY")) div.classList.add("yellow");
 
-      feed.appendChild(div);
-    });
+    div.onclick = ()=>{
+      document.getElementById('title').innerText = item.title;
+      document.getElementById('content').innerText = item.content;
+      document.getElementById('signal').innerText = "TRADE SIGNAL: " + item.signal;
 
-  } catch (error) {
-    console.error("Error:", error);
-    document.getElementById('details').innerText = "Error loading data...";
-  }
+      // random impact (demo)
+      document.getElementById('globalBar').style.width = "80%";
+      document.getElementById('cryptoBar').style.width = "60%";
+    };
+
+    feed.appendChild(div);
+  });
 }
 
 loadData();
-
-/* Auto refresh */
 setInterval(loadData, 10000);
+
+
+// TERMINAL COMMAND SYSTEM
+document.getElementById("command").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    const cmd = this.value;
+    const output = document.getElementById("terminalOutput");
+
+    if(cmd.includes("crypto")){
+      output.innerHTML += "<br>> Showing crypto signals...";
+    }
+    else if(cmd.includes("oil")){
+      output.innerHTML += "<br>> Oil market analysis loaded...";
+    }
+    else if(cmd.includes("reset")){
+      output.innerHTML = "";
+    }
+    else{
+      output.innerHTML += "<br>> Unknown command";
+    }
+
+    this.value = "";
+  }
+});
 
 </script>
 
 </body>
 </html>
-<!--update -->
