@@ -22,7 +22,7 @@ body { background:black; color:#00ff9f; font-family: monospace; }
 
 <script>
 async function loadData(){
-  const res = await fetch('https://example.com/api/feed');
+  const res = await fetch('https://geo-intel-backend.onrender.com/api/feed');
   const data = await res.json();
 
   const feed = document.getElementById('feed');
